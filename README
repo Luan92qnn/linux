@@ -1,0 +1,15 @@
+shell script.
+file comes from many different servers will be check automatically.
+if it is equal to the number of predefined file.
+return 1 (to launch another job)
+else return 0 ( wait and do nothing)
+hard part: 
+  the differnt day will have different file.
+  received file time is from the last time file has been received and processed.
+  
+solution:
+  make a file contain list of intended to receive file for each day ( 7 file total).
+  make a file contain The intended date of receipt of the file.
+  get time received file and compare it with above file.
+
+=>finally it working! \m/
