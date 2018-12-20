@@ -1,0 +1,453 @@
+#!/bin/bash
+
+
+function findzenkainoline_andzenkaihiduke() {
+                                                                                file_name=$1
+                                                                                #zenkai_jishibi=$1
+                                                                                #echo 'file_name-------********'
+                                                                                #echo $file_name
+                                                                                zenkai_line=$2
+                                                                                #echo $zenkai_line
+                                                                                maeno_gyo=`sed -n ${zenkai_line}p xxx`
+                                                                                OldIFS=$IFS
+                                                                                IFS='   '
+                                                                                set $maeno_gyo
+                                                                                findzenkainoline_systembi=$1
+                                                                                findzenkainoline_unyoubi=$2
+                                                                                findzenkainoline_kaisijikan=$3
+                                                                                findzenkainoline_kakuninfile=$4
+                                                                                IFS=$OldIFS
+                                                                                unset IFS
+                                                                                OldIFS=$IFS
+                                                                                #IFS='/'
+                                                                                #set $findzenkainoline_unyoubi
+                                                                                #getsu=$2
+                                                                                #nichi=$3
+                                                                                #IFS=$OldIFS
+                                                                                #unset IFS
+                                                                                clgt=`grep $file_name xxx`
+                                                                                kekka=$?
+
+                                                                                if [ 0 -eq $kekka ];then
+                                                                                        #echo $lineofmaenohi
+                                                                                        #zenkai_jusinbifunction_line=$zenkai_line
+                                                                                        #zenkai_jusinbifunction_hiduke=$findzenkainoline_systembi
+                                                                                        #zenkai_jusinbifunction_jikan=$findzenkainoline_kaisijikan
+
+                                                                                        if [ "$TOKUBETSUHINO_JUSHINBI" \> "$findzenkainoline_systembi" ];then
+                                                                                                               # echo $kakuninfile_fileIFID 'このファイルが来ました'
+                                                                                                echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '受信済'
+
+                                                                                        elif [ "$TOKUBETSUHINO_JUSHINBI" == "$findzenkainoline_systembi" ] && [ "$TOKUBETSUHINO_JUSHINJI" \> "$findzenkainoline_kaisijikan" ];then
+                                                                                                                echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '受信済'
+                                                                                        else
+                                                                                                #4列があるかどうかを確認する
+                                                                                                if [ "$kakuninfile_touchcommand" == "　" ];then
+
+                                                                                                        echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '未受信'
+                                                                                                        echo $FILE_NAME_TMP >> xxxtemp_file
+                                                                                                else
+                                                                                                        echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '作成完了'
+                                                                                                        echo $kakuninfile_touchcommand
+                                                                                                        echo `$kakuninfile_touchcommand`
+                                                                                                fi
+                                                                                                #--------------------------------
+                                                                                        fi
+
+
+                                                                                        return 1
+                                                                                else
+                                                                                        #echo $zenkai_line
+                                                                                        zenkai_line=`expr $zenkai_line - 1`
+                                                                                        #echo $zenkai_line
+                                                                                        findzenkainoline_andzenkaihiduke $file_name $zenkai_line
+
+                                                                                        return 0
+
+                                                                                fi
+                                                                        }
+
+
+
+echo '**************************************************************************************************************'
+echo '                                  バッチSTファイル受信確認開始                                 '
+echo ''
+zenkai_jusinbifunction_hiduke=0
+zenkai_jusinbifunction_jikan=0
+zenkai_jusinbifunction_line=0
+> xxxkekka_file_final
+> xxxtemp_file
+
+SYS_DATE=`date +%Y/%m/%d`
+#SYS_DATE='2018/03/13'
+SYS_TIME_NOW=`date +%H:%M:%S`
+#SYS_DATE='2017/08/08'
+time_start_touch_file='20:20:00'
+
+OldIFS=$IFS
+#echo $IFS
+A=$IFS
+#echo 'test1 system date'
+#echo $SYS_DATE
+Stringhiduke=`grep -n ^$SYS_DATE xxxbatch_hiduke`
+grepseiko=$?
+#echo 'ccdkm'
+#echo $Stringhiduke
+#echo 'seiko'
+#echo $grepseiko
+if [ 0 -eq $grepseiko ];then
+
+#echo $Stringhiduke
+#Stringf="2017/07/21    2017/11/30      18:00   master_file_nichiji"
+#@arr=split(/   /,$Stringhiduke)
+IFS='   '
+set $Stringhiduke
+Stringhiduke_systemhiduke1=$1
+Stringhiduke_unyouhiduke=$2
+Stringhiduke_kaisijikan=$3
+Stringhiduke_kakuninfile=$4
+IFS=$OldIFS
+OldIFS=$IFS
+IFS=':'
+
+set $Stringhiduke_systemhiduke1
+Stringhiduke_systemhiduke=$2
+Stringhiduke_linenumber=$1
+unset IFS
+#echo $IFS
+#echo $Stringhiduke_systemhiduke
+#echo $Stringhiduke_unyouhiduke
+#echo $Stringhiduke_kaisijikan
+#echo $Stringhiduke_kakuninfile
+#echo $Stringhiduke_linenumber
+
+if [ "$Stringhiduke_kaisijikan" == "18:00:00" ];then
+
+        time_start_touch_file='17:15:00'
+elif [ "$Stringhiduke_kaisijikan" == "13:00:00" ];then
+
+        time_start_touch_file='11:20:00'
+elif [ "$Stringhiduke_kaisijikan" == "11:00:00" ];then
+        time_start_touch_file='11:20:00'
+else
+        time_start_touch_file='17:15:00'
+fi
+
+IFS=$OldIFS
+unset IFS
+
+#当日の年月日の運用日を取る
+OldIFS=$IFS
+IFS='/'
+set $Stringhiduke_unyouhiduke
+TOUJITSUNO_NICHI=$3
+IFS=$OldIFS
+unset IFS
+#echo '当日の年月日の運用日を取る'
+#echo $TOUJITSUNO_NICHI
+#echo '----------------------'
+#------------------------
+#前回バッチの日の行数を取る
+#前回バッチのシステム日付を取る
+#前回バッチの開始時間
+#------------------------------
+Stringhiduke_linenumberofmaenohi=`expr $Stringhiduke_linenumber - 1`
+Stringhiduke_linenumberoftsuginohi=`expr $Stringhiduke_linenumber + 1`
+#echo '===test1 string hiduke_line number of mae no hi=='
+#echo $Stringhiduke_linenumberofmaenohi
+#echo '-----------------------------------------'
+
+Stringhiduke_zenkai=`sed -n ${Stringhiduke_linenumberofmaenohi}p xxxbatch_hiduke`
+
+
+
+#echo 'Stringhiduke_zenkai'
+#echo '#----test2-------------'
+#echo $Stringhiduke_zenkai
+#echo '#---------test2--------'
+OldIFS=$IFS
+IFS='   '
+set $Stringhiduke_zenkai
+Stringhiduke_systemhiduke_zenkai=$1
+Stringhiduke_unyouhiduke_zenkai=$2
+Stringhiduke_kaisijikan_zenkai=$3
+Stringhiduke_kakuninfile_zenkai=$4
+IFS=$OldIFS
+OldIFS=$IFS
+unset IFS
+
+Stringhiduke_tsugi=`sed -n ${Stringhiduke_linenumberoftsuginohi}p xxxbatch_hiduke`
+
+OldIFS=$IFS
+IFS='   '
+set $Stringhiduke_tsugi
+Stringhiduke_systemhiduke_tsugi=$1
+Stringhiduke_unyouhiduke_tsugi=$2
+Stringhiduke_kaisijikan_tsugi=$3
+Stringhiduke_kakuninfile_tsugi=$4
+IFS=$OldIFS
+OldIFS=$IFS
+unset IFS
+
+#echo $IFS
+#echo '#############################'
+#echo $Stringhiduke_systemhiduke_zenkai
+#echo $Stringhiduke_unyouhiduke_zenkai
+#echo $Stringhiduke_kaisijikan_zenkai
+#echo $Stringhiduke_kakuninfile_zenkai
+#echo $Stringhiduke_linenumber_zenkai
+
+#-----------------------------------
+#echo $arr[0]
+#echo $arr[1]
+#echo $arr[2]
+#echo $arr[3]
+#lineofmaenohi=$Stringhiduke_linenumberofmaenohi
+#受信ファイル結果を取る
+Stringhiduke_systemhiduke_zenkai_command=${Stringhiduke_systemhiduke_zenkai///}
+#echo $Stringhiduke_systemhiduke_zenkai_command
+#echo "hello"
+
+utllist -r -from $Stringhiduke_systemhiduke_zenkai_command | grep -v HOST > xxx/kekkaa_file
+
+#-------------------------------------
+JUSHIN_FILE_KENSHUU=`cat xxx$Stringhiduke_kakuninfile | wc -l`
+#echo $JUSHIN_FILE_KENSHUU
+#-------------------------------------------------------------------------------------------------
+#kekka_fileの条件（日付と時間）に当たる行列を抽出して新しいファイルに送ります。（kekka_file_final）
+
+KEKKA_FILE_KENSHUU=`cat xxx/kekkaa_file | wc -l`
+#echo 'KEKKA_FILE_KENSHUU'
+#echo $KEKKA_FILE_KENSHUU
+KEKKA_FILE_KENSHUU_1=`expr $KEKKA_FILE_KENSHUU - 1`
+#echo $KEKKA_FILE_KENSHUU_1
+#echo 'KEKKA_FILE_KENSHUU'
+for count in `seq 3 ${KEKKA_FILE_KENSHUU_1}`
+
+        do
+                FILE_NAME_TMP_1=`sed -n ${count}p xxx/kekkaa_file`
+                #echo $FILE_NAME_TMP_1
+                OldIFS=$IFS
+                IFS='  '
+                set $FILE_NAME_TMP_1
+                #kekka_fileIFID=$1
+                #kekka_file_filename=$2
+                kekka_file_jushinbi=$3
+                kekka_file_jushinji=$4
+                #echo 'file name kakunin'
+                #echo $kekka_fileIFID
+                #echo $kekka_file_filename
+                #echo '----'
+                #echo $kekka_file_jushinbi
+                #echo $kekka_file_jushinji
+                #echo '-------------------'
+                IFS=$OldIFS
+                unset IFS
+
+                if [ "$kekka_file_jushinbi" \> "$Stringhiduke_systemhiduke_zenkai" ];then
+                        #echo 'so sanh ngay thang 1'
+                        #echo $FILE_NAME_TMP_1
+                        echo $FILE_NAME_TMP_1 >> xxxkekka_file_final
+                        #echo 'so sanh ngay thang 1 ket thuc'
+                elif [ "$kekka_file_jushinbi" == "$Stringhiduke_systemhiduke_zenkai" ] && [ "$kekka_file_jushinji" \> "$Stringhiduke_kaisijikan_zenkai" ];then
+                        #echo 'so sanh ngay thang 2'
+                        #echo $FILE_NAME_TMP_1
+                        echo $FILE_NAME_TMP_1 >> xxxkekka_file_final
+                        #echo 'so sanh ngay thang 2 ket thuc'
+                else
+                                        B=6
+                fi
+
+
+done
+
+#--------------------------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------------------------
+#受信予定が有るファイルをkekka_file_finalに検索します。
+lineofmaenohi=$Stringhiduke_linenumberofmaenohi
+
+
+
+
+for file_count in `seq 1 ${JUSHIN_FILE_KENSHUU}`
+
+        do
+                #当日の確認が必要ファイル名を取る
+                FILE_NAME_TMP=`sed -n ${file_count}p xxx$Stringhiduke_kakuninfile`
+                #echo $FILE_NAME_TMP
+                OldIFS=$IFS
+                IFS='   '
+                set $FILE_NAME_TMP
+                kakuninfile_fileIFID=$1
+                kakuninfile_filename=$2
+                kakuninfile_wccommand=$3
+                kakuninfile_touchcommand=$4
+                #echo 'file name kakunin_1'
+                #echo $kakuninfile_filename
+                IFS=$OldIFS
+                unset IFS
+
+                CHECK_FILE=`grep $kakuninfile_filename xxkekka_file_final`
+                tmp_check_kekka=$?
+                #echo $tmp_check_kekka
+                #echo 'CHECK_FILE'
+                #echo $CHECK_FILE
+                #echo '----------'
+
+                        if [ 0 -eq $tmp_check_kekka ];then
+                                #OldIFS=$IFS
+                                #IFS=' '
+                                #set $CHECK_FILE
+                                ##jusinfile_filename=$2
+                                #jusinfile_hiduke=$3
+                                #jusinfile_jikan=$4
+                                #IFS=$OldIFS
+                                #unset IFS
+                                echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '受信済'
+
+                        else
+
+                                if [ "$SYS_TIME_NOW" \> "$time_start_touch_file" ];then
+
+                                        if [ "$kakuninfile_wccommand" == "　" ];then
+
+                                                if [ "$kakuninfile_touchcommand" == "　" ];then
+
+                                                        echo $FILE_NAME_TMP >> xxxtemp_file
+                                                        echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '未受信'
+                                                else
+                                                        echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '作成完了'
+                                                        echo '今の時間帯は：' $SYS_TIME_NOW ' ですので touch コマンドを実行します。下記のようなコマンドです。'
+                                                        echo $kakuninfile_touchcommand
+                                                        echo `$kakuninfile_touchcommand`
+                                                fi
+                                        else
+                                                #utllist command　を　打って件数を確認
+                                                #echo '**************************************'
+                                                #echo $kakuninfile_wccommand
+
+
+                                                #`$kakuninfile_wccommand` > xxxtokubetsufileno_jushinkekka
+
+                                                eval ${kakuninfile_wccommand} > xxxtokubetsufileno_jushinkekka
+                                                #echo '**************************************'
+                                                TOKUBETSUFILE_KENSHUU=`cat xxxtokubetsufileno_jushinkekka | wc -l`
+                                                #-------------------------------------
+                                                if [ "$TOKUBETSUFILE_KENSHUU" == "1" ];then
+                                                        #4列があるかどうかを確認する
+                                                        if [ "$kakuninfile_touchcommand" == "　" ];then
+                                                        echo $FILE_NAME_TMP >> xxxtemp_file
+                                                        echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '未受信'
+                                                        else
+                                                        echo ""
+                                                        #echo $kakuninfile_fileIFID '   ' $kakuninfile_filename '       ' '作成完了'
+                                                        #echo $kakuninfile_touchcommand
+                                                        #echo `$kakuninfile_touchcommand`
+                                                        fi
+                                                        #----------------------------
+                                                else
+
+                                                        TOKUBETSUHINO_SAIGONO_GYO=`sed -n ${TOKUBETSUFILE_KENSHUU}p xxxtokubetsufileno_jushinkekka`
+                                                        #echo 'TOKUBETSUHINO_SAIGONO_GYO'
+                                                        #echo $TOKUBETSUHINO_SAIGONO_GYO
+                                                        #echo 'TOKUBETSUHINO_SAIGONO_GYO'
+                                                        OldIFS=$IFS
+                                                        IFS='  '
+                                                        set $TOKUBETSUHINO_SAIGONO_GYO
+                                                        #特別ファイルの運用日
+                                                        TOKUBETSUHINO_JUSHINBI=$3
+                                                        TOKUBETSUHINO_JUSHINJI=$4
+                                                        #---------------------
+                                                        IFS=$OldIFS
+                                                        unset IFS
+
+                                                fi
+                                                findzenkainoline_andzenkaihiduke $kakuninfile_filename $lineofmaenohi
+                                                #echo $?
+                                        fi
+                                else
+                                #       echo 'nhu cc dkm'
+                                        echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '未受信'
+                                        echo $FILE_NAME_TMP >> xxxtemp_file
+
+                                fi
+                        fi
+
+done
+#--------------------------------------------------------------------------------------------------
+#       clear
+        echo '**************************************************************************************************************'
+        #echo '                         ********************************************************************'
+        echo '                                          xxx受信確認完了'
+        echo '今回の実行情報：'
+        echo '          SYSTEM 日付     　：' $SYS_DATE
+        echo '          SYSTEM 時間     　：' $SYS_TIME_NOW
+        echo '  　      バッチの開始時間　：' $Stringhiduke_kaisijikan
+        echo 'touch コマンドの自動開始時間        ： '$time_start_touch_file
+        echo '          運用日付        　：' $Stringhiduke_unyouhiduke
+        echo ''
+        echo '[[[[[[[[[次のバッチST運用日          ：   ' $Stringhiduke_unyouhiduke_tsugi  ']]]]]]]]]]]]]]]]]]'
+        echo ''
+        echo '          バッチの実行対象日：' $Stringhiduke_kakuninfile
+        echo '受信結果：'
+        #ls xxxtemp_file
+        #check=$?
+        #if [ 0 -eq $check ];then
+        temp_file_kensu=`cat xxxtemp_file | wc -l`
+        if [ "$temp_file_kensu" == "0" ];then
+        echo '***************************************************************************************************************'
+        #echo '                          ***********************************'
+        echo '                           ファイルが全部来ました!!!'
+        #echo '                           ***********************************'
+        echo '***************************************************************************************************************'
+        else
+                echo '下記のようなファイルがまだこないです'
+                echo '----------------'
+                echo '                                                ファイル到着予定時刻'
+                #echo '                                   オンライン開放15時          オンライン開放18時'
+                echo ' '
+                #for count in `seq 1 ${temp_file_kensu}`
+                #       do
+                #       clgt=`sed -n ${count}p xxx/temp_file`
+                #       clgt2=$clgt
+                #       OldIFS=$IFS
+                #       set $clgt
+                #       clgt_IF_ID=$1
+                #       OldIFS=$IFS
+                #       unset IFS
+                #       #echo $clgt2
+                #       clgt1=`grep -s $clgt_IF_ID xxxtime_file_come`
+                #       #echo $clgt1
+                #       grepseiko1=$?
+                #       #echo $grepseiko1
+                #       if [ 0 -eq $grepseiko1 ];then
+                #               echo $clgt1
+                ##      else
+                ##              echo $clgt2
+                #       fi
+                #done
+                for count in `seq 1 ${temp_file_kensu}`
+                        do
+                        clgt=`sed -n ${count}p xxxtemp_file`
+                        echo $clgt
+                done
+                echo ''
+                echo '--以上--'
+                #echo '                         *********************************************************************'
+                echo '******************************************************************************************************************'
+        #else
+        #       echo '**********************************************************'
+        #       echo 'ファイルが全部来ました!!!'
+        #       echo '*********************************************************'
+        fi
+
+else
+        clear
+        echo '*************************************************************************************'
+        echo '                          ***********************************'
+        echo '                          		実行日じゃないです。'
+        echo '                                  ' $SYS_DATE
+        echo '                          ***********************************'
+        echo '*************************************************************************************'
+fi
