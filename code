@@ -2,67 +2,67 @@
 
 
 function findzenkainoline_andzenkaihiduke() {
-                                                                                file_name=$1
-                                                                                #zenkai_jishibi=$1
-                                                                                #echo 'file_name-------********'
-                                                                                #echo $file_name
-                                                                                zenkai_line=$2
-                                                                                #echo $zenkai_line
-                                                                                maeno_gyo=`sed -n ${zenkai_line}p xxx`
-                                                                                OldIFS=$IFS
-                                                                                IFS='   '
-                                                                                set $maeno_gyo
-                                                                                findzenkainoline_systembi=$1
-                                                                                findzenkainoline_unyoubi=$2
-                                                                                findzenkainoline_kaisijikan=$3
-                                                                                findzenkainoline_kakuninfile=$4
-                                                                                IFS=$OldIFS
-                                                                                unset IFS
-                                                                                OldIFS=$IFS
-                                                                                #IFS='/'
-                                                                                #set $findzenkainoline_unyoubi
-                                                                                #getsu=$2
-                                                                                #nichi=$3
-                                                                                #IFS=$OldIFS
-                                                                                #unset IFS
-                                                                                clgt=`grep $file_name xxx`
-                                                                                kekka=$?
+          file_name=$1
+          #zenkai_jishibi=$1
+          #echo 'file_name-------********'
+          #echo $file_name
+          zenkai_line=$2
+          #echo $zenkai_line
+          maeno_gyo=`sed -n ${zenkai_line}p xxx`
+          OldIFS=$IFS
+          IFS='   '
+          set $maeno_gyo
+          findzenkainoline_systembi=$1
+          findzenkainoline_unyoubi=$2
+          findzenkainoline_kaisijikan=$3
+          findzenkainoline_kakuninfile=$4
+          IFS=$OldIFS
+          unset IFS
+          OldIFS=$IFS
+          #IFS='/'
+          #set $findzenkainoline_unyoubi
+          #getsu=$2
+          #nichi=$3
+          #IFS=$OldIFS
+          #unset IFS
+          clgt=`grep $file_name xxx`
+          kekka=$?
 
-                                                                                if [ 0 -eq $kekka ];then
-                                                                                        #echo $lineofmaenohi
-                                                                                        #zenkai_jusinbifunction_line=$zenkai_line
-                                                                                        #zenkai_jusinbifunction_hiduke=$findzenkainoline_systembi
-                                                                                        #zenkai_jusinbifunction_jikan=$findzenkainoline_kaisijikan
+          if [ 0 -eq $kekka ];then
+                  #echo $lineofmaenohi
+                  #zenkai_jusinbifunction_line=$zenkai_line
+                  #zenkai_jusinbifunction_hiduke=$findzenkainoline_systembi
+                  #zenkai_jusinbifunction_jikan=$findzenkainoline_kaisijikan
 
-                                                                                        if [ "$TOKUBETSUHINO_JUSHINBI" \> "$findzenkainoline_systembi" ];then
-                                                                                                               # echo $kakuninfile_fileIFID 'このファイルが来ました'
-                                                                                                echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '受信済'
+                  if [ "$TOKUBETSUHINO_JUSHINBI" \> "$findzenkainoline_systembi" ];then
+                                         # echo $kakuninfile_fileIFID 'このファイルが来ました'
+                          echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '受信済'
 
-                                                                                        elif [ "$TOKUBETSUHINO_JUSHINBI" == "$findzenkainoline_systembi" ] && [ "$TOKUBETSUHINO_JUSHINJI" \> "$findzenkainoline_kaisijikan" ];then
-                                                                                                                echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '受信済'
-                                                                                        else
-                                                                                                #4列があるかどうかを確認する
-                                                                                                if [ "$kakuninfile_touchcommand" == "　" ];then
+                  elif [ "$TOKUBETSUHINO_JUSHINBI" == "$findzenkainoline_systembi" ] && [ "$TOKUBETSUHINO_JUSHINJI" \> "$findzenkainoline_kaisijikan" ];then
+                                          echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '受信済'
+                  else
+                          #4列があるかどうかを確認する
+                          if [ "$kakuninfile_touchcommand" == "　" ];then
 
-                                                                                                        echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '未受信'
-                                                                                                        echo $FILE_NAME_TMP >> xxxtemp_file
-                                                                                                else
-                                                                                                        echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '作成完了'
-                                                                                                        echo $kakuninfile_touchcommand
-                                                                                                        echo `$kakuninfile_touchcommand`
-                                                                                                fi
-                                                                                                #--------------------------------
-                                                                                        fi
+                                  echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '未受信'
+                                  echo $FILE_NAME_TMP >> xxxtemp_file
+                          else
+                                  echo $kakuninfile_fileIFID '    ' $kakuninfile_filename '       ' '作成完了'
+                                  echo $kakuninfile_touchcommand
+                                  echo `$kakuninfile_touchcommand`
+                          fi
+                          #--------------------------------
+                  fi
 
 
-                                                                                        return 1
-                                                                                else
-                                                                                        #echo $zenkai_line
-                                                                                        zenkai_line=`expr $zenkai_line - 1`
-                                                                                        #echo $zenkai_line
-                                                                                        findzenkainoline_andzenkaihiduke $file_name $zenkai_line
+                  return 1
+          else
+                  #echo $zenkai_line
+                  zenkai_line=`expr $zenkai_line - 1`
+                  #echo $zenkai_line
+                  findzenkainoline_andzenkaihiduke $file_name $zenkai_line
 
-                                                                                        return 0
+                  return 0
 
                                                                                 fi
                                                                         }
